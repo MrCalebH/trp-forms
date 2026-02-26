@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRP Marketing Request</title>
+<style>
+  :root {
+    --blue: #005DA1;
+    --blue-light: #E8F2FA;
+    --blue-mid: #CCE3F3;
+    --green: #79E034;
+    --green-dark: #5cb520;
+    --white: #FFFFFF;
+    --grey-bg: #F4F7FA;
+    --grey-border: #D1DDE8;
+    --grey-text: #64748B;
+    --dark: #0F2540;
+    --error: #E53935;
+    --error-bg: #FFF0F0;
+    --success: #2E7D32;
+    --success-bg: #E8F5E9;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,93,161,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,93,161,0.13);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--grey-bg);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--dark);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ===== HEADER ===== */
+  .page-header {
+    background: var(--blue);
+    padding: 28px 40px 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header::after {
+    content: '';
+    position: absolute;
+    right: -60px; top: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(121,224,52,0.12);
+  }
+  .page-header::before {
+    content: '';
+    position: absolute;
+    right: 80px; bottom: -40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .header-inner { max-width: 780px; margin: 0 auto; position: relative; z-index: 1; }
+  .header-logo {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  }
+  .logo-mark {
+    width: 40px; height: 40px; border-radius: 8px;
+    background: var(--green); display: flex; align-items: center; justify-content: center;
+    font-weight: 900; font-size: 16px; color: var(--dark); flex-shrink: 0;
+  }
+  .logo-text { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.9; }
+  .page-header h1 { font-size: 26px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+  .page-header p { font-size: 14px; opacity: 0.75; max-width: 500px; }
+
+  /* ===== PROGRESS ===== */
+  .progress-bar-wrap {
+    background: white;
+    border-bottom: 1px solid var(--grey-border);
+    padding: 0 40px;
+    position: sticky; top: 0; z-index: 50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .progress-inner { max-width: 780px; margin: 0 auto; }
+  .step-nav {
+    display: flex; align-items: stretch;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .step-nav::-webkit-scrollbar { display: none; }
+  .step-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 16px; border: none; background: none;
+    cursor: pointer; white-space: nowrap; font-size: 12px;
+    font-weight: 600; color: var(--grey-text);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .step-btn:hover { color: var(--blue); }
+  .step-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .step-btn.done { color: var(--green-dark); border-bottom-color: var(--green); }
+  .step-num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800;
+    background: var(--grey-border); color: var(--grey-text);
+    flex-shrink: 0; transition: all 0.2s;
+  }
+  .step-btn.active .step-num { background: var(--blue); color: white; }
+  .step-btn.done .step-num { background: var(--green); color: var(--dark); }
+
+  /* ===== FORM BODY ===== */
+  .form-body { max-width: 780px; margin: 0 auto; padding: 32px 40px 0; }
+
+  /* ===== SECTIONS ===== */
+  .section { display: none; }
+  .section.active { display: block; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .section-header { margin-bottom: 24px; }
+  .section-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--blue-light); color: var(--blue);
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
+    margin-bottom: 10px;
+  }
+  .section-tag .dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; }
+  .section-header h2 { font-size: 22px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .section-header p { font-size: 14px; color: var(--grey-text); }
+
+  /* ===== FIELD CARD ===== */
+  .card {
+    background: white;
+    border: 1px solid var(--grey-border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:focus-within { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,93,161,0.1); }
+  .card.error-card { border-color: var(--error); box-shadow: 0 0 0 3px rgba(229,57,53,0.08); }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+  label {
+    display: block;
+    font-size: 13px; font-weight: 700; color: var(--dark);
+    margin-bottom: 7px; letter-spacing: 0.2px;
+  }
+  label .req { color: var(--error); margin-left: 2px; }
+  label .hint { font-size: 11px; font-weight: 400; color: var(--grey-text); display: block; margin-top: 2px; }
+
+  input[type="text"], input[type="email"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--grey-border);
+    border-radius: 7px;
+    font-size: 14px; color: var(--dark);
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    font-family: inherit;
+    appearance: none;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, textarea:focus, select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,93,161,0.1);
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23005DA1' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
+
+  .error-msg { font-size: 12px; color: var(--error); margin-top: 5px; display: none; font-weight: 500; }
+  .error-msg.show { display: block; }
+
+  /* ===== RADIO / CHECKBOX ===== */
+  .radio-group, .check-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-group.inline, .check-group.inline { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+
+  .radio-opt, .check-opt {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--grey-border);
+    border-radius: 7px; cursor: pointer;
+    font-size: 13px; color: var(--dark);
+    transition: all 0.15s; user-select: none;
+    background: white;
+  }
+  .radio-opt:hover, .check-opt:hover { border-color: var(--blue); background: var(--blue-light); }
+  .radio-opt input, .check-opt input { display: none; }
+
+  .radio-opt.selected { border-color: var(--blue); background: var(--blue-light); color: var(--blue); font-weight: 600; }
+  .check-opt.selected { border-color: var(--blue); background: var(--blue-light); }
+
+  .radio-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid var(--grey-border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .radio-opt.selected .radio-dot {
+    border-color: var(--blue); background: var(--blue);
+  }
+  .radio-opt.selected .radio-dot::after {
+    content: ''; width: 7px; height: 7px; background: white; border-radius: 50%;
+  }
+
+  .check-box {
+    width: 18px; height: 18px; border-radius: 4px;
+    border: 2px solid var(--grey-border); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; font-size: 11px; color: white;
+  }
+  .check-opt.selected .check-box {
+    border-color: var(--blue); background: var(--blue);
+  }
+  .check-opt.selected .check-box::after { content: '✓'; }
+
+  /* ===== DEADLINE SECTION ===== */
+  .deadline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 600px) { .deadline-grid { grid-template-columns: 1fr; } }
+
+  /* ===== URGENCY BANNER ===== */
+  .urgency-banner {
+    display: none; background: #FFF3E0; border: 1px solid #FFB74D;
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 13px; color: #E65100; font-weight: 500;
+    margin-top: 12px; align-items: center; gap: 8px;
+  }
+  .urgency-banner.show { display: flex; }
+
+  /* ===== NAVIGATION ===== */
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 28px; padding: 24px 0;
+    border-top: 1px solid var(--grey-border);
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; border: none; cursor: pointer;
+    transition: all 0.2s; font-family: inherit; letter-spacing: 0.2px;
+  }
+  .btn-primary {
+    background: var(--blue); color: white;
+    box-shadow: 0 2px 8px rgba(0,93,161,0.25);
+  }
+  .btn-primary:hover { background: #004a82; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,93,161,0.3); }
+  .btn-secondary { background: white; color: var(--blue); border: 1.5px solid var(--blue); }
+  .btn-secondary:hover { background: var(--blue-light); }
+  .btn-ghost { background: none; color: var(--grey-text); border: 1.5px solid var(--grey-border); }
+  .btn-ghost:hover { background: var(--grey-bg); color: var(--dark); }
+  .btn-submit {
+    background: var(--green); color: var(--dark);
+    box-shadow: 0 2px 8px rgba(121,224,52,0.3);
+    font-size: 15px; padding: 14px 32px;
+  }
+  .btn-submit:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+  .step-counter { font-size: 12px; color: var(--grey-text); font-weight: 500; }
+
+  /* ===== SUCCESS ===== */
+  .success-screen {
+    display: none; text-align: center; padding: 60px 40px;
+    background: white; border-radius: var(--radius);
+    border: 1px solid var(--grey-border); box-shadow: var(--shadow-lg);
+    margin-top: 32px;
+  }
+  .success-screen.show { display: block; animation: fadeIn 0.4s ease; }
+  .success-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--success-bg); display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 32px;
+  }
+  .success-screen h2 { font-size: 26px; font-weight: 800; color: var(--dark); margin-bottom: 10px; }
+  .success-screen p { font-size: 15px; color: var(--grey-text); max-width: 420px; margin: 0 auto 28px; line-height: 1.6; }
+  .success-ref { background: var(--blue-light); border-radius: 8px; padding: 14px 20px; display: inline-block; margin-bottom: 24px; }
+  .success-ref span { font-size: 12px; color: var(--grey-text); display: block; }
+  .success-ref strong { font-size: 16px; color: var(--blue); font-family: monospace; }
+
+  /* ===== ASSET STATUS ===== */
+  .asset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 600px) { .asset-grid { grid-template-columns: 1fr; } }
+  .asset-card { background: var(--grey-bg); border-radius: 8px; padding: 14px; border: 1.5px solid var(--grey-border); }
+  .asset-card label { margin-bottom: 8px; font-size: 12px; }
+
+  /* ===== TOOLTIP ===== */
+  .field-tip {
+    font-size: 12px; color: var(--grey-text);
+    margin-top: 5px; line-height: 1.4;
+  }
+
+  input[type="date"] {
+    padding: 10px 14px;
+    border: 1.5px solid var(--grey-border);
+    border-radius: 7px; font-size: 14px;
+    color: var(--dark); background: white;
+    transition: border-color 0.2s; outline: none;
+    font-family: inherit; width: 100%;
+    appearance: none;
+  }
+  input[type="date"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(0,93,161,0.1); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="logo-mark">TRP</div>
+      <div class="logo-text">The Remarkable Practice</div>
+    </div>
+    <h1>Marketing Request</h1>
+    <p>Submit a request for any marketing asset — campaigns, collateral, ads, social, print, and more.</p>
+  </div>
+</div>
+
+<!-- STEP NAV -->
+<div class="progress-bar-wrap">
+  <div class="progress-inner">
+    <div class="step-nav">
+      <button class="step-btn active" onclick="goTo(0)">
+        <div class="step-num">1</div> Who's Requesting
+      </button>
+      <button class="step-btn" onclick="goTo(1)">
+        <div class="step-num">2</div> What You Need
+      </button>
+      <button class="step-btn" onclick="goTo(2)">
+        <div class="step-num">3</div> Deadlines
+      </button>
+      <button class="step-btn" onclick="goTo(3)">
+        <div class="step-num">4</div> Your Assets
+      </button>
+      <button class="step-btn" onclick="goTo(4)">
+        <div class="step-num">5</div> Approval
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="form-body">
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✅</div>
+    <h2>Request submitted!</h2>
+    <p>The marketing team has your request and will confirm the timeline within 1 business day.</p>
+    <div class="success-ref">
+      <span>Reference ID</span>
+      <strong id="refId">TRP-MKTG-0000</strong>
+    </div>
+    <br>
+    <button class="btn btn-secondary" onclick="resetForm()">Submit another request</button>
+  </div>
+
+  <form id="mainForm" novalidate>
+
+    <!-- SECTION 1 -->
+    <div class="section active" id="section-0">
+      <div class="section-header">
+        <div class="section-tag"><div class="dot"></div> Step 1 of 5</div>
+        <h2>Who's Requesting</h2>
+        <p>Tell us who you are so we can follow up directly.</p>
+      </div>
+
+      <div class="card">
+        <div class="field-row">
+          <div>
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" id="firstname" placeholder="e.g. Sarah" autocomplete="given-name">
+            <div class="error-msg" id="err-firstname">Please enter your first name</div>
+          </div>
+          <div>
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" id="lastname" placeholder="e.g. Johnson" autocomplete="family-name">
+            <div class="error-msg" id="err-lastname">Please enter your last name</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Email Address <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="you@theremarkablepractice.com" autocomplete="email">
+        <div class="error-msg" id="err-email">Please enter a valid email</div>
+      </div>
+
+      <div class="card">
+        <label>Role / Department <span class="req">*</span></label>
+        <select id="jobtitle">
+          <option value="">Select your role...</option>
+          <option>Coach</option>
+          <option>Admin</option>
+          <option>Sales</option>
+          <option>Leadership</option>
+          <option>Success Partner</option>
+          <option>Other</option>
+        </select>
+        <div class="error-msg" id="err-jobtitle">Please select your role</div>
+      </div>
+
+      <div class="nav-row">
+        <span class="step-counter">Step 1 of 5</span>
+        <button type="button" class="btn btn-primary" onclick="next(0)">Next — What Do You Need →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section" id="section-1">
+      <div class="section-header">
+        <div class="section-tag"><div class="dot"></div> Step 2 of 5</div>
+        <h2>What Do You Need</h2>
+        <p>Describe the asset, the audience, and what you want them to do.</p>
+      </div>
+
+      <div class="card">
+        <label>Request Type <span class="req">*</span>
+          <span class="hint">Select everything that applies to this request</span>
+        </label>
+        <div class="check-group" id="request_type" style="margin-top:4px">
+          <div class="check-opt" data-val="email_campaign" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Email Campaign
+          </div>
+          <div class="check-opt" data-val="social_post" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Social Post
+          </div>
+          <div class="check-opt" data-val="landing_page" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Landing Page
+          </div>
+          <div class="check-opt" data-val="ad_creative" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Ad Creative
+          </div>
+          <div class="check-opt" data-val="event_collateral" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Event Collateral
+          </div>
+          <div class="check-opt" data-val="print_material" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Print Material
+          </div>
+          <div class="check-opt" data-val="video_script" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Video / Script
+          </div>
+          <div class="check-opt" data-val="sms_copy" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> SMS Copy
+          </div>
+          <div class="check-opt" data-val="other" onclick="toggleCheck(this,'request_type')">
+            <div class="check-box"></div> Other
+          </div>
+        </div>
+        <div class="error-msg" id="err-request_type">Please select at least one request type</div>
+      </div>
+
+      <div class="card">
+        <label>Project or Event Name <span class="req">*</span></label>
+        <input type="text" id="project_event_name" placeholder="e.g. Brisbane Business Immersion, IN8 Summit Perth">
+        <div class="error-msg" id="err-project_event_name">Please enter a project or event name</div>
+      </div>
+
+      <div class="card">
+        <label>Description — What do you need and why? <span class="req">*</span>
+          <span class="hint">Be specific. The more detail you give us, the faster we can deliver.</span>
+        </label>
+        <textarea id="message" placeholder="Describe what you need. Include any context, previous work this builds on, or specific requirements..." rows="5"></textarea>
+        <div class="error-msg" id="err-message">Please describe what you need</div>
+      </div>
+
+      <div class="card">
+        <label>Target Audience <span class="req">*</span></label>
+        <select id="target_audience">
+          <option value="">Who is this for?</option>
+          <option value="prospects">Prospects — people who haven't joined yet</option>
+          <option value="current_members">Current Members</option>
+          <option value="success_partners">Success Partners</option>
+          <option value="chiropractors">Chiropractors (general)</option>
+          <option value="internal_team">Internal Team</option>
+        </select>
+        <div class="error-msg" id="err-target_audience">Please select the target audience</div>
+      </div>
+
+      <div class="card">
+        <label>Key Message <span class="req">*</span>
+          <span class="hint">What is the one thing you want the audience to think, feel, or do after seeing this?</span>
+        </label>
+        <textarea id="key_message" placeholder="e.g. Attend the Brisbane event and register by March 5th before early bird ends" rows="3"></textarea>
+        <div class="error-msg" id="err-key_message">Please describe the key message</div>
+      </div>
+
+      <div class="card">
+        <div class="field-row">
+          <div>
+            <label>CTA Text <span class="req">*</span>
+              <span class="hint">What should the button or link say?</span>
+            </label>
+            <input type="text" id="cta_text" placeholder="e.g. Register Now, Book My Spot">
+            <div class="error-msg" id="err-cta_text">Please enter the CTA text</div>
+          </div>
+          <div>
+            <label>CTA Destination <span class="req">*</span>
+              <span class="hint">Where does it go?</span>
+            </label>
+            <input type="text" id="cta_destination" placeholder="e.g. https://go.trp.com/brisbane">
+            <div class="error-msg" id="err-cta_destination">Please enter the CTA destination</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Do you have a specific offer or discount?</label>
+        <div class="radio-group inline" id="has_offer" style="margin-top:6px">
+          <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_offer'); document.getElementById('offer_block').style.display='block'">
+            <div class="radio-dot"></div> Yes
+          </div>
+          <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_offer'); document.getElementById('offer_block').style.display='none'">
+            <div class="radio-dot"></div> No
+          </div>
+        </div>
+        <div id="offer_block" style="display:none;margin-top:12px">
+          <label>What's the offer?</label>
+          <input type="text" id="offer_details" placeholder="e.g. $500 off if registered by March 1">
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn btn-ghost" onclick="prev(1)">← Back</button>
+        <span class="step-counter">Step 2 of 5</span>
+        <button type="button" class="btn btn-primary" onclick="next(1)">Next — Deadlines →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section" id="section-2">
+      <div class="section-header">
+        <div class="section-tag"><div class="dot"></div> Step 3 of 5</div>
+        <h2>Deadlines</h2>
+        <p>We need both dates to plan the work. Hard deadline = the date it must be live, no exceptions.</p>
+      </div>
+
+      <div class="card">
+        <div class="deadline-grid">
+          <div>
+            <label>Hard Deadline <span class="req">*</span>
+              <span class="hint">Date the asset must be live or in hand</span>
+            </label>
+            <input type="date" id="hard_deadline">
+            <div class="error-msg" id="err-hard_deadline">Please set the hard deadline</div>
+          </div>
+          <div>
+            <label>First Draft Needed By <span class="req">*</span>
+              <span class="hint">When you need something to review</span>
+            </label>
+            <input type="date" id="first_draft_date">
+            <div class="error-msg" id="err-first_draft_date">Please set the draft date</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Is this urgent? <span class="req">*</span>
+          <span class="hint">Urgent = less than 5 business days to the deadline</span>
+        </label>
+        <div class="radio-group inline" id="is_urgent" style="margin-top:6px">
+          <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'is_urgent'); document.getElementById('urgentBanner').classList.add('show'); document.getElementById('urgent_block').style.display='block'">
+            <div class="radio-dot"></div> ⚡ Yes — this is urgent
+          </div>
+          <div class="radio-opt" data-val="no" onclick="selectRadio(this,'is_urgent'); document.getElementById('urgentBanner').classList.remove('show'); document.getElementById('urgent_block').style.display='none'">
+            <div class="radio-dot"></div> No — standard timeline
+          </div>
+        </div>
+        <div class="urgency-banner" id="urgentBanner">
+          ⚠️ Urgent requests may incur a rush fee and cannot be guaranteed. We'll confirm availability within 4 hours.
+        </div>
+        <div id="urgent_block" style="display:none;margin-top:12px">
+          <label>Why is this urgent?</label>
+          <input type="text" id="urgent_reason" placeholder="e.g. Event was rescheduled, campaign launches Monday">
+        </div>
+        <div class="error-msg" id="err-is_urgent">Please select yes or no</div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn btn-ghost" onclick="prev(2)">← Back</button>
+        <span class="step-counter">Step 3 of 5</span>
+        <button type="button" class="btn btn-primary" onclick="next(2)">Next — Your Assets →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section" id="section-3">
+      <div class="section-header">
+        <div class="section-tag"><div class="dot"></div> Step 4 of 5</div>
+        <h2>Assets You're Providing</h2>
+        <p>Tell us what you have ready so we know what we need to create from scratch.</p>
+      </div>
+
+      <div class="card">
+        <div class="asset-grid">
+          <div class="asset-card">
+            <label>Copy Written? <span class="req">*</span></label>
+            <div class="radio-group" id="has_copy">
+              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_copy')"><div class="radio-dot"></div> Yes</div>
+              <div class="radio-opt" data-val="partial" onclick="selectRadio(this,'has_copy')"><div class="radio-dot"></div> Partial</div>
+              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_copy')"><div class="radio-dot"></div> No</div>
+            </div>
+            <div class="error-msg" id="err-has_copy">Required</div>
+          </div>
+          <div class="asset-card">
+            <label>Images / Photos? <span class="req">*</span></label>
+            <div class="radio-group" id="has_images">
+              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_images')"><div class="radio-dot"></div> Yes</div>
+              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_images')"><div class="radio-dot"></div> No</div>
+            </div>
+            <div class="error-msg" id="err-has_images">Required</div>
+          </div>
+          <div class="asset-card">
+            <label>Logo / Brand File? <span class="req">*</span></label>
+            <div class="radio-group" id="has_logo">
+              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_logo')"><div class="radio-dot"></div> Yes</div>
+              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_logo')"><div class="radio-dot"></div> No</div>
+              <div class="radio-opt" data-val="using_trp_brand" onclick="selectRadio(this,'has_logo')"><div class="radio-dot"></div> Using TRP brand</div>
+            </div>
+            <div class="error-msg" id="err-has_logo">Required</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--blue)">
+        <label>Has this type of request been done before at TRP? <span class="req">*</span>
+          <span class="hint">Helps us avoid reinventing the wheel and understand what exists already</span>
+        </label>
+        <div class="radio-group inline" id="done_before" style="margin-top:6px">
+          <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'done_before'); document.getElementById('prev_block').style.display='block'">
+            <div class="radio-dot"></div> Yes
+          </div>
+          <div class="radio-opt" data-val="no" onclick="selectRadio(this,'done_before'); document.getElementById('prev_block').style.display='none'">
+            <div class="radio-dot"></div> No — first time
+          </div>
+          <div class="radio-opt" data-val="not_sure" onclick="selectRadio(this,'done_before'); document.getElementById('prev_block').style.display='block'">
+            <div class="radio-dot"></div> Not sure
+          </div>
+        </div>
+        <div class="error-msg" id="err-done_before">Please select one</div>
+
+        <div id="prev_block" style="display:none;margin-top:16px">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--grey-text);margin-bottom:5px">How was it done before?
+                <span class="hint">Who handled it, what tool was used, what the output looked like</span>
+              </label>
+              <textarea id="how_done_before" placeholder="e.g. Anya built this in Canva using the Brisbane template. Marion scheduled it in Keep. Copy was written by Annette and dropped in a Google Doc." rows="3"></textarea>
+            </div>
+            <div>
+              <label style="font-size:12px;font-weight:600;color:var(--grey-text);margin-bottom:5px">What needs to be different or better this time?</label>
+              <textarea id="what_to_improve" placeholder="e.g. Last time the CTA link was wrong. This time we need the hotel link included. Also needs to go out earlier." rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <label>Previous examples, templates, or reference links</label>
+        <textarea id="related_urls" placeholder="Google Doc links, Canva files, previous email links, HubSpot templates, Drive folders — anything the team can reference..." rows="3"></textarea>
+        <div class="field-tip">The more reference material you give us, the less back-and-forth we need.</div>
+      </div>
+
+      <div class="card">
+        <label>Anything else we should know?</label>
+        <textarea id="additional_notes" placeholder="Brand notes, tone preferences, things to avoid, previous versions to reference..." rows="3"></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn btn-ghost" onclick="prev(3)">← Back</button>
+        <span class="step-counter">Step 4 of 5</span>
+        <button type="button" class="btn btn-primary" onclick="next(3)">Next — Approval →</button>
+      </div>
+    </div>
+
+    <!-- SECTION 5 -->
+    <div class="section" id="section-4">
+      <div class="section-header">
+        <div class="section-tag"><div class="dot"></div> Step 5 of 5</div>
+        <h2>Approval</h2>
+        <p>Who gives final sign-off on this asset before it goes live?</p>
+      </div>
+
+      <div class="card">
+        <label>Who needs to approve the final asset? <span class="req">*</span>
+          <span class="hint">Name and/or email of the approver</span>
+        </label>
+        <input type="text" id="approval_contact" placeholder="e.g. Jon Anderson, jon@theremarkablepractice.com">
+        <div class="error-msg" id="err-approval_contact">Please enter the approver's name</div>
+      </div>
+
+      <div class="card">
+        <label>Are they aware this request is in progress? <span class="req">*</span></label>
+        <div class="radio-group inline" id="approver_aware" style="margin-top:6px">
+          <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'approver_aware')"><div class="radio-dot"></div> Yes</div>
+          <div class="radio-opt" data-val="no" onclick="selectRadio(this,'approver_aware')"><div class="radio-dot"></div> No</div>
+          <div class="radio-opt" data-val="not_required" onclick="selectRadio(this,'approver_aware')"><div class="radio-dot"></div> Not required</div>
+        </div>
+        <div class="error-msg" id="err-approver_aware">Please select one</div>
+      </div>
+
+      <!-- SUMMARY PREVIEW -->
+      <div class="card" style="background:var(--blue-light);border-color:var(--blue-mid)">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--blue);margin-bottom:12px">Request Summary</div>
+        <div id="summaryContent" style="font-size:13px;color:var(--dark);line-height:1.8"></div>
+      </div>
+
+      <div class="nav-row">
+        <button type="button" class="btn btn-ghost" onclick="prev(4)">← Back</button>
+        <span class="step-counter">Step 5 of 5</span>
+        <button type="button" class="btn btn-submit" id="submitBtn" onclick="submitForm()">
+          ✓ Submit Request
+        </button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  let currentStep = 0;
+  const totalSteps = 5;
+
+  // ===== NAVIGATION =====
+  function goTo(step) {
+    document.getElementById(`section-${currentStep}`).classList.remove('active');
+    document.getElementById(`section-${step}`).classList.add('active');
+    const btns = document.querySelectorAll('.step-btn');
+    btns.forEach((b, i) => {
+      b.classList.remove('active');
+      if (i < step) b.classList.add('done');
+      else if (i === step) b.classList.add('active');
+      else b.classList.remove('done');
+    });
+    currentStep = step;
+    if (step === 4) buildSummary();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function next(step) {
+    if (!validateStep(step)) return;
+    goTo(step + 1);
+  }
+
+  function prev(step) {
+    goTo(step - 1);
+  }
+
+  // ===== RADIO / CHECKBOX =====
+  function selectRadio(el, groupId) {
+    document.querySelectorAll(`#${groupId} .radio-opt`).forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    clearErr(groupId);
+  }
+
+  function toggleCheck(el, groupId) {
+    el.classList.toggle('selected');
+    clearErr(groupId);
+  }
+
+  function getRadio(groupId) {
+    const sel = document.querySelector(`#${groupId} .radio-opt.selected`);
+    return sel ? sel.dataset.val : '';
+  }
+
+  function getChecks(groupId) {
+    return Array.from(document.querySelectorAll(`#${groupId} .check-opt.selected`)).map(e => e.dataset.val);
+  }
+
+  // ===== VALIDATION =====
+  function showErr(id, show=true) {
+    const el = document.getElementById(`err-${id}`);
+    if (el) { el.classList.toggle('show', show); }
+    const field = document.getElementById(id);
+    if (field) field.style.borderColor = show ? 'var(--error)' : '';
+  }
+
+  function clearErr(id) { showErr(id, false); }
+
+  function validateStep(step) {
+    let ok = true;
+
+    if (step === 0) {
+      const fn = document.getElementById('firstname').value.trim();
+      const ln = document.getElementById('lastname').value.trim();
+      const em = document.getElementById('email').value.trim();
+      const jt = document.getElementById('jobtitle').value;
+      if (!fn) { showErr('firstname'); ok = false; } else clearErr('firstname');
+      if (!ln) { showErr('lastname'); ok = false; } else clearErr('lastname');
+      if (!em || !em.includes('@')) { showErr('email'); ok = false; } else clearErr('email');
+      if (!jt) { showErr('jobtitle'); ok = false; } else clearErr('jobtitle');
+    }
+
+    if (step === 1) {
+      const rt = getChecks('request_type');
+      const pn = document.getElementById('project_event_name').value.trim();
+      const msg = document.getElementById('message').value.trim();
+      const ta = document.getElementById('target_audience').value;
+      const km = document.getElementById('key_message').value.trim();
+      const ct = document.getElementById('cta_text').value.trim();
+      const cd = document.getElementById('cta_destination').value.trim();
+      if (!rt.length) { showErr('request_type'); ok = false; } else clearErr('request_type');
+      if (!pn) { showErr('project_event_name'); ok = false; } else clearErr('project_event_name');
+      if (!msg) { showErr('message'); ok = false; } else clearErr('message');
+      if (!ta) { showErr('target_audience'); ok = false; } else clearErr('target_audience');
+      if (!km) { showErr('key_message'); ok = false; } else clearErr('key_message');
+      if (!ct) { showErr('cta_text'); ok = false; } else clearErr('cta_text');
+      if (!cd) { showErr('cta_destination'); ok = false; } else clearErr('cta_destination');
+    }
+
+    if (step === 2) {
+      const hd = document.getElementById('hard_deadline').value;
+      const fd = document.getElementById('first_draft_date').value;
+      const iu = getRadio('is_urgent');
+      if (!hd) { showErr('hard_deadline'); ok = false; } else clearErr('hard_deadline');
+      if (!fd) { showErr('first_draft_date'); ok = false; } else clearErr('first_draft_date');
+      if (!iu) { showErr('is_urgent'); ok = false; } else clearErr('is_urgent');
+    }
+
+    if (step === 3) {
+      const hc = getRadio('has_copy');
+      const hi = getRadio('has_images');
+      const hl = getRadio('has_logo');
+      const db = getRadio('done_before');
+      if (!hc) { showErr('has_copy'); ok = false; } else clearErr('has_copy');
+      if (!hi) { showErr('has_images'); ok = false; } else clearErr('has_images');
+      if (!hl) { showErr('has_logo'); ok = false; } else clearErr('has_logo');
+      if (!db) { showErr('done_before'); ok = false; } else clearErr('done_before');
+    }
+
+    if (!ok) {
+      const errEl = document.querySelector('.error-msg.show');
+      if (errEl) errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    return ok;
+  }
+
+  // ===== SUMMARY =====
+  function buildSummary() {
+    const typeLabels = {
+      email_campaign:'Email Campaign', social_post:'Social Post', landing_page:'Landing Page',
+      ad_creative:'Ad Creative', event_collateral:'Event Collateral', print_material:'Print Material',
+      video_script:'Video/Script', sms_copy:'SMS Copy', other:'Other'
+    };
+    const checks = getChecks('request_type').map(v => typeLabels[v] || v).join(', ');
+    const urgentLabel = getRadio('is_urgent') === 'yes' ? '⚡ Yes — urgent' : 'No';
+    const copyLabel = {yes:'Yes',partial:'Partial',no:'No'}[getRadio('has_copy')] || '—';
+    const imagesLabel = {yes:'Yes',no:'No'}[getRadio('has_images')] || '—';
+    const logoLabel = {yes:'Yes',no:'No',using_trp_brand:'Using TRP brand'}[getRadio('has_logo')] || '—';
+
+    const doneBeforeVal = getRadio('done_before');
+    const doneBeforeLabel = {yes:'Yes',no:'No — first time',not_sure:'Not sure'}[doneBeforeVal] || '—';
+    const prevRef = document.getElementById('related_urls').value.trim();
+
+    document.getElementById('summaryContent').innerHTML = `
+      <b>Requester:</b> ${document.getElementById('firstname').value} ${document.getElementById('lastname').value}<br>
+      <b>Project:</b> ${document.getElementById('project_event_name').value || '—'}<br>
+      <b>Type:</b> ${checks || '—'}<br>
+      <b>Hard Deadline:</b> ${document.getElementById('hard_deadline').value || '—'}<br>
+      <b>First Draft:</b> ${document.getElementById('first_draft_date').value || '—'}<br>
+      <b>Urgent:</b> ${urgentLabel}<br>
+      <b>Copy / Images / Logo:</b> ${copyLabel} / ${imagesLabel} / ${logoLabel}<br>
+      <b>Done before?</b> ${doneBeforeLabel}<br>
+      ${prevRef ? `<b>References:</b> ${prevRef}<br>` : ''}
+      <b>Approver:</b> ${document.getElementById('approval_contact').value || '—'}
+    `;
+  }
+
+  // ===== SUBMIT =====
+  function getValue(id) { return document.getElementById(id)?.value?.trim() || ''; }
+
+  async function submitForm() {
+    if (!validateStep(4)) return;
+    const approvalContact = getValue('approval_contact');
+    const approverAware = getRadio('approver_aware');
+    if (!approvalContact) { showErr('approval_contact'); return; }
+    if (!approverAware) { showErr('approver_aware'); return; }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const data = {
+      firstname: getValue('firstname'),
+      lastname: getValue('lastname'),
+      email: getValue('email'),
+      jobtitle: getValue('jobtitle'),
+      request_type: getChecks('request_type').join(';'),
+      project_event_name: getValue('project_event_name'),
+      message: getValue('message'),
+      target_audience: document.getElementById('target_audience').value,
+      key_message: getValue('key_message'),
+      cta_text: getValue('cta_text'),
+      cta_destination: getValue('cta_destination'),
+      has_offer: getRadio('has_offer'),
+      offer_details: getValue('offer_details'),
+      hard_deadline: getValue('hard_deadline'),
+      first_draft_date: getValue('first_draft_date'),
+      is_urgent: getRadio('is_urgent'),
+      urgent_reason: getValue('urgent_reason'),
+      has_copy: getRadio('has_copy'),
+      has_images: getRadio('has_images'),
+      has_logo: getRadio('has_logo'),
+      done_before: getRadio('done_before'),
+      how_done_before: getValue('how_done_before'),
+      what_to_improve: getValue('what_to_improve'),
+      related_urls: getValue('related_urls'),
+      additional_notes: getValue('additional_notes'),
+      approval_contact: approvalContact,
+      approver_aware: approverAware,
+    };
+
+    // Submit to HubSpot
+    try {
+      const portalId = '50604063';
+      const formId = 'a68634a1-74b2-4a21-8747-08a287c91ca7';
+      const fields = Object.entries(data).map(([name, value]) => ({ name, value }));
+      const payload = { fields, context: { pageUri: window.location.href, pageName: 'TRP Marketing Request Form' } };
+
+      const resp = await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const ref = 'TRP-MKTG-' + Date.now().toString(36).toUpperCase().slice(-6);
+      document.getElementById('refId').textContent = ref;
+      document.getElementById('mainForm').style.display = 'none';
+      document.getElementById('successScreen').classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = '✓ Submit Request';
+      alert('There was an error submitting. Please try again or contact the marketing team directly.');
+    }
+  }
+
+  function resetForm() {
+    document.getElementById('mainForm').reset();
+    document.getElementById('mainForm').style.display = 'block';
+    document.getElementById('successScreen').classList.remove('show');
+    document.querySelectorAll('.radio-opt, .check-opt').forEach(el => el.classList.remove('selected'));
+    goTo(0);
+  }
+
+  // Set min dates to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('hard_deadline').min = today;
+  document.getElementById('first_draft_date').min = today;
+</script>
+
+</body>
+</html>
