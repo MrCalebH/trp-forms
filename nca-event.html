@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule a Call — The Remarkable Practice</title>
+<style>
+  :root {
+    --blue: #005DA1;
+    --blue-light: #E8F2FA;
+    --blue-mid: #CCE3F3;
+    --green: #79E034;
+    --green-dark: #5cb520;
+    --white: #FFFFFF;
+    --grey-bg: #F4F7FA;
+    --grey-border: #D1DDE8;
+    --grey-text: #64748B;
+    --dark: #0F2540;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,93,161,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,93,161,0.13);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--grey-bg);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .hero {
+    background: var(--blue);
+    padding: 40px 24px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(121,224,52,0.08);
+  }
+  .hero-inner { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-logo {
+    margin-bottom: 20px;
+  }
+  .hero-logo img { height: 28px; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(121,224,52,0.2);
+    color: var(--green);
+    font-size: 11px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; padding: 5px 14px; border-radius: 100px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 30px; font-weight: 800; color: white; line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6;
+    max-width: 480px; margin: 0 auto 20px;
+  }
+  .hero-proof {
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    flex-wrap: wrap; margin-top: 8px;
+  }
+  .proof-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: rgba(255,255,255,0.65);
+  }
+  .proof-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+
+  /* MAIN LAYOUT */
+  .page-body {
+    max-width: 680px; margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* FORM CARD */
+  .form-card {
+    background: white;
+    border: 1px solid var(--grey-border);
+    border-radius: 14px;
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+  }
+  .form-title { font-size: 17px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+  .form-sub { font-size: 13px; color: var(--grey-text); margin-bottom: 24px; }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
+
+  .field-group { margin-bottom: 16px; }
+  label {
+    display: block; font-size: 12px; font-weight: 700;
+    color: var(--dark); margin-bottom: 6px; letter-spacing: 0.2px;
+  }
+  label .req { color: #E53935; margin-left: 2px; }
+  input, textarea, select {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--grey-border); border-radius: 8px;
+    font-size: 14px; color: var(--dark); background: white;
+    transition: border-color 0.2s; outline: none;
+    font-family: inherit; appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(0,93,161,0.1);
+  }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  .error-msg { font-size: 11px; color: #E53935; margin-top: 4px; display: none; }
+  .error-msg.show { display: block; }
+
+  /* SUBMIT */
+  .submit-btn {
+    width: 100%; padding: 15px;
+    background: var(--green); color: var(--dark);
+    font-size: 16px; font-weight: 800;
+    border: none; border-radius: 9px; cursor: pointer;
+    font-family: inherit; margin-top: 8px;
+    box-shadow: 0 3px 12px rgba(121,224,52,0.35);
+    transition: all 0.2s; letter-spacing: 0.3px;
+  }
+  .submit-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .privacy-note { font-size: 11px; color: var(--grey-text); text-align: center; margin-top: 10px; }
+
+  /* DIVIDER */
+  .or-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 28px 0; color: var(--grey-text); font-size: 12px; font-weight: 600;
+  }
+  .or-divider::before, .or-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--grey-border);
+  }
+
+  /* CALENDAR EMBED */
+  .calendar-section {
+    background: var(--blue-light);
+    border: 1px solid var(--blue-mid);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-top: 28px;
+  }
+  .cal-title { font-size: 15px; font-weight: 700; color: var(--blue); margin-bottom: 6px; }
+  .cal-sub { font-size: 13px; color: var(--grey-text); margin-bottom: 16px; }
+  .cal-placeholder {
+    background: white; border: 2px dashed var(--blue-mid);
+    border-radius: 8px; padding: 40px 20px;
+    color: var(--grey-text); font-size: 13px; line-height: 1.6;
+  }
+  .cal-cta-btn {
+    display: inline-block; margin-top: 16px;
+    background: var(--blue); color: white;
+    padding: 12px 28px; border-radius: 8px;
+    font-size: 14px; font-weight: 700;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .cal-cta-btn:hover { background: #004a82; }
+
+  /* SUCCESS */
+  .success-screen {
+    display: none; text-align: center; padding: 48px 24px;
+  }
+  .success-screen.show { display: block; animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
+  .success-icon { font-size: 56px; margin-bottom: 16px; }
+  .success-screen h2 { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 8px; }
+  .success-screen p { font-size: 15px; color: var(--grey-text); max-width: 400px; margin: 0 auto; line-height: 1.6; }
+
+  /* TRUST BAR */
+  .trust-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 24px; flex-wrap: wrap;
+    padding: 20px 0 0; margin-top: 24px;
+    border-top: 1px solid var(--grey-border);
+  }
+  .trust-item { font-size: 12px; color: var(--grey-text); display: flex; align-items: center; gap: 6px; }
+  .trust-item::before { content: '✓'; color: var(--green-dark); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-logo">
+      <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGlkPSJDYXBhXzEiIGRhdGEtbmFtZT0iQ2FwYSAxIiB2aWV3Qm94PSIwIDAgNjAgMTMuODkiPjxkZWZzPjxzdHlsZT4gLmNscy0xIHsgZmlsbDogI2ZmZmZmZjsgfSAuY2xzLTEsIC5jbHMtMiwgLmNscy0zIHsgc3Ryb2tlLXdpZHRoOiAwcHg7IH0gLmNscy0yIHsgZmlsbDogIzc5RTAzNDsgfSAuY2xzLTMgeyBmaWxsOiAjZmZmZmZmOyB9IDwvc3R5bGU+PC9kZWZzPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTMuNTgsMTEuMDRzLjktLjA4LDEuMDQtMS4xOWMwLDAsLjI0LTEuOC0xLjc5LTEuOTRIMHY1LjNoMS45MnYtMS43bC45LDEuN2gyLjE1bC0xLjM5LTIuMTdaTTIuNzQsOS44OWMtLjAxLjY0LS44Ny41NS0uODcuNTV2LTEuMWMuODktLjA4Ljg3LjU1Ljg3LjU1WiI+PC9wYXRoPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTI1LjcsMTEuMDRzLjktLjA4LDEuMDQtMS4xOWMwLDAsLjI0LTEuOC0xLjc5LTEuOTRoLTIuODN2NS4zaDEuOTJ2LTEuN2wuOSwxLjdoMi4xNWwtMS4zOS0yLjE3Wk0yNC45Miw5Ljg5Yy0uMDEuNjQtLjkyLjU1LS45Mi41NXYtMS4xYy45NC0uMDguOTIuNTUuOTIuNTVaIj48L3BhdGg+PHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjUuMjYgNy45MSA1LjI2IDEzLjIxIDguODYgMTMuMjEgOC44NiAxMS43NyA3LjE3IDExLjc3IDcuMTcgMTEuMjEgOC42OSAxMS4yMSA4LjY5IDkuODUgNy4xNyA5Ljg1IDcuMTcgOS4zMyA4Ljg2IDkuMzMgOC44NiA3LjkxIDUuMjYgNy45MSI+PC9wb2x5Z29uPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSI0Ny44NyA3LjkyIDQ3Ljg3IDEzLjIyIDUxLjQ3IDEzLjIyIDUxLjQ3IDExLjc4IDQ5Ljc4IDExLjc4IDQ5Ljc4IDExLjIyIDUxLjI5IDExLjIyIDUxLjI5IDkuODYgNDkuNzggOS44NiA0OS43OCA5LjM0IDUxLjQ3IDkuMzQgNTEuNDcgNy45MiA0Ny44NyA3LjkyIj48L3BvbHlnb24+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzYuMzcsNy45MWgtMi4xMWwtMS43Miw0LjctMS40My0yLjA4LDEuNTgtMi42M2gtMi4xNmwtMS4xOSwyLjE3di0yLjE3aC0xLjl2NS4zaDEuOXYtMi4xbDEuMjYsMi4xaDMuODJsLjE1LS42OGgxLjQybC4xOS42OGgyLjA3bC0xLjg2LTUuM1pNMzQuODQsMTEuNDFsLjQtMS43Ny40LDEuNzdoLS44MVoiPjwvcGF0aD48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00Mi43NCwxMC44NnMtLjIxLS4yOC0uNzEtLjQzYzAsMCwuODEtLjIyLjcxLTEuMjcsMCwwLS4wNi0xLjIzLTEuNTctMS4yNmgtMi43NHY1LjMyaDIuNzRzMS43MS4wNCwxLjgzLTEuM2MwLDAsLjA1LS42NC0uMjYtMS4wNlpNNDAuMjMsOS4yNGMuNzctLjA1Ljc1LjM5Ljc1LjM5LDAsLjQ2LS43NS4zOS0uNzUuMzl2LS43OVpNNDEuMTcsMTEuNTdjLS4wMS41Mi0uOTUuNDUtLjk1LjQ1di0uOWMuOTctLjA2Ljk1LjQ1Ljk1LjQ1WiI+PC9wYXRoPjxwb2x5Z29uIGNsYXNzPSJjbHMtMSIgcG9pbnRzPSI0My42IDcuOSA0My42IDEzLjIyIDQ3LjM4IDEzLjIyIDQ3LjM4IDExLjUgNDUuNTMgMTEuNSA0NS41MyA3LjkgNDMuNiA3LjkiPjwvcG9seWdvbj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0yMC4xMyw3LjkxaC0yLjE1bC0xLjcxLDQuNi0uODEtNC42aC0xLjk4bC0uNzUsMi40OS0uNzMtMi40OWgtMmwtLjkyLDUuM2gxLjkybC4yNy0yLjgxLjg2LDIuODFoMS4xM2wuODYtMi44MS4zNiwyLjgxaDMuNjZsLjE2LS42N2gxLjRsLjIuNjdoMi4wN2wtMS44NC01LjNaTTE4LjU2LDExLjM0bC40LTEuNzcuNCwxLjc3aC0uODFaIj48L3BhdGg+PGc+PGVsbGlwc2UgY2xhc3M9ImNscy0yIiBjeD0iNTQuMDYiIGN5PSIxMi4xMSIgcng9IjIuMTciIHJ5PSIxLjY4IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtLjIxIDIzLjI0KSByb3RhdGUoLTI0LjIxKSI+PC9lbGxpcHNlPjxwb2x5Z29uIGNsYXNzPSJjbHMtMiIgcG9pbnRzPSI1NC43IDIuMSA2MCAwIDU2LjAzIDkuNTkgNTMuMjIgOS44NSA1NC43IDIuMSI+PC9wb2x5Z29uPjwvZz48cGF0aCBjbGFzcz0iY2xzLTMiIGQ9Ik01Ny44MSwxMS44MnYuMmgtLjM5djEuMDFoLS4yNHYtMS4wMWgtLjM5di0uMmgxLjAyWk01OS4xMywxMy4wM2wtLjA0LS43MWMwLS4wOSwwLS4yMSwwLS4zNGgtLjAxYy0uMDMuMTEtLjA3LjI1LS4xLjM2bC0uMjIuNjdoLS4yNWwtLjIyLS42OWMtLjAyLS4wOS0uMDYtLjI0LS4wOC0uMzRoLS4wMWMwLC4xMSwwLC4yMywwLC4zNGwtLjA0LjcxaC0uMjNsLjA5LTEuMjJoLjM2bC4yMS41OWMuMDMuMDkuMDUuMTguMDguMzFoMGMuMDMtLjExLjA2LS4yMS4wOC0uM2wuMjEtLjZoLjM1bC4wOSwxLjIyaC0uMjRaIj48L3BhdGg+PC9zdmc+IA==" alt="The Remarkable Practice">
+    </div>
+    <div class="hero-tag">Nebraska Chiropractic Association · March 26</div>
+    <h1>Schedule Your Free Strategy Call</h1>
+    <p>Learn how chiropractic practices across North America are adding 10–20 new patients per month — without cold outreach or paid ads.</p>
+    <div class="hero-proof">
+      <div class="proof-item"><div class="proof-dot"></div> 30-minute call</div>
+      <div class="proof-item"><div class="proof-dot"></div> No commitment</div>
+      <div class="proof-item"><div class="proof-dot"></div> Specific to your practice</div>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="page-body">
+
+  <div class="form-card">
+
+    <!-- SUCCESS STATE -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✅</div>
+      <h2>You're all set!</h2>
+      <p>We've received your request. A member of our team will reach out within 1 business day to confirm your call time.</p>
+    </div>
+
+    <!-- FORM -->
+    <div id="formWrap">
+      <div class="form-title">Request a Call</div>
+      <div class="form-sub">Fill in your details and we'll reach out to schedule at a time that works for you.</div>
+
+      <form id="ncaForm" novalidate>
+        <div class="field-row">
+          <div class="field-group">
+            <label>First Name <span class="req">*</span></label>
+            <input type="text" id="firstname" placeholder="Jane" autocomplete="given-name">
+            <div class="error-msg" id="err-firstname">Required</div>
+          </div>
+          <div class="field-group">
+            <label>Last Name <span class="req">*</span></label>
+            <input type="text" id="lastname" placeholder="Smith" autocomplete="family-name">
+            <div class="error-msg" id="err-lastname">Required</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="email" placeholder="you@yourpractice.com" autocomplete="email">
+          <div class="error-msg" id="err-email">Please enter a valid email</div>
+        </div>
+
+        <div class="field-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="(555) 000-0000" autocomplete="tel">
+        </div>
+
+        <div class="field-group">
+          <label>Practice Name <span class="req">*</span></label>
+          <input type="text" id="company" placeholder="Smith Family Chiropractic">
+          <div class="error-msg" id="err-company">Required</div>
+        </div>
+
+        <div class="field-group">
+          <label>City / State</label>
+          <input type="text" id="city" placeholder="Lincoln, NE">
+        </div>
+
+        <div class="field-group">
+          <label>Anything you'd like us to know before the call?</label>
+          <textarea id="additional_notes" placeholder="e.g. Current patient volume, biggest growth challenge, specific questions..." rows="3"></textarea>
+        </div>
+
+        <!-- Hidden fields -->
+        <input type="hidden" id="lead_source_event" value="NCA Event - March 2026">
+        <input type="hidden" id="referred_by" value="Dr. Lori Morgan">
+
+        <button type="button" class="submit-btn" id="submitBtn" onclick="submitForm()">
+          Request My Strategy Call →
+        </button>
+
+        <div class="privacy-note">We respect your privacy. Your information will never be shared or sold.</div>
+      </form>
+
+      <div class="or-divider">OR</div>
+
+      <!-- CALENDAR SECTION -->
+      <div class="calendar-section">
+        <div class="cal-title">Prefer to pick your own time?</div>
+        <div class="cal-sub">Book directly on Dr. Michelle or Adam's calendar.</div>
+        <div class="cal-placeholder" id="calPlaceholder">
+          📅 Calendar booking link coming soon.<br>
+          <span style="font-size:12px;color:#94A3B8">Once Dr. Michelle and Adam's meeting links are set up in HubSpot, they'll appear here.</span>
+        </div>
+        <!-- When meeting links are ready, replace the placeholder above with:
+        <div id="meetings-embed-parent"></div>
+        <script type="text/javascript" src="https://static.hsappstatic.net/MeetingsEmbed/ex/MeetingsEmbedCode.js"></script>
+        <div class="meetings-iframe-container" data-src="MEETING_LINK_HERE?embed=true"></div>
+        -->
+      </div>
+
+      <div class="trust-bar">
+        <div class="trust-item">No spam ever</div>
+        <div class="trust-item">1 business day response</div>
+        <div class="trust-item">Working with 1,000+ practices</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const PORTAL_ID = '50604063';
+  const FORM_ID = '1ecd1018-b82d-4bc6-8c8a-3dfb7d6e7fee';
+
+  function val(id) { return (document.getElementById(id)?.value || '').trim(); }
+  function showErr(id, show) {
+    const e = document.getElementById('err-' + id);
+    if (e) e.classList.toggle('show', show);
+    const f = document.getElementById(id);
+    if (f) f.style.borderColor = show ? '#E53935' : '';
+  }
+
+  function validate() {
+    let ok = true;
+    ['firstname','lastname','email','company'].forEach(id => {
+      const v = val(id);
+      const invalid = !v || (id === 'email' && !v.includes('@'));
+      showErr(id, invalid);
+      if (invalid) ok = false;
+    });
+    return ok;
+  }
+
+  async function submitForm() {
+    if (!validate()) return;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const fields = ['firstname','lastname','email','phone','company','city','additional_notes','lead_source_event','referred_by']
+      .map(name => ({ name, value: val(name) }));
+
+    try {
+      await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fields, context: { pageUri: window.location.href, pageName: 'NCA Event — Schedule a Call' } })
+      });
+    } catch(e) {}
+
+    document.getElementById('formWrap').style.display = 'none';
+    document.getElementById('successScreen').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+
+</body>
+</html>
