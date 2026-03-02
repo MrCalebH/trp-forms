@@ -493,14 +493,18 @@
 
       <div class="card">
         <label>Target Audience <span class="req">*</span></label>
-        <select id="target_audience">
+        <select id="target_audience" onchange="document.getElementById('target_audience_other_block').style.display=this.value==='other'?'block':'none'">
           <option value="">Who is this for?</option>
           <option value="prospects">Prospects — people who haven't joined yet</option>
           <option value="current_members">Current Members</option>
           <option value="success_partners">Success Partners</option>
           <option value="chiropractors">Chiropractors (general)</option>
           <option value="internal_team">Internal Team</option>
+          <option value="other">Other</option>
         </select>
+        <div id="target_audience_other_block" style="display:none;margin-top:10px">
+          <input type="text" id="target_audience_other" placeholder="Please specify the target audience">
+        </div>
         <div class="error-msg" id="err-target_audience">Please select the target audience</div>
       </div>
 
@@ -510,6 +514,26 @@
         </label>
         <textarea id="key_message" placeholder="e.g. Attend the Brisbane event and register by March 5th before early bird ends" rows="3"></textarea>
         <div class="error-msg" id="err-key_message">Please describe the key message</div>
+      </div>
+
+      <div class="card">
+        <label>What do you want people to do after seeing this? <span class="req">*</span>
+          <span class="hint">Select all that apply — this shapes the CTA</span>
+        </label>
+        <div class="check-group" id="cta_goal" style="margin-top:8px">
+          <div class="check-opt" data-val="booked_appointments" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Book an appointment</div>
+          <div class="check-opt" data-val="schedule_meeting" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Schedule a meeting / call</div>
+          <div class="check-opt" data-val="event_registration" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Register for an event</div>
+          <div class="check-opt" data-val="purchase" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Make a purchase</div>
+          <div class="check-opt" data-val="download" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Download a resource</div>
+          <div class="check-opt" data-val="brand_awareness" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Build brand awareness</div>
+          <div class="check-opt" data-val="nurture" onclick="toggleCheck(this,'cta_goal')"><div class="check-box"></div> Nurture / stay top of mind</div>
+          <div class="check-opt" data-val="cta_goal_other" onclick="toggleCheck(this,'cta_goal'); document.getElementById('cta_goal_other_block').style.display=this.classList.contains('selected')?'block':'none'"><div class="check-box"></div> Other</div>
+        </div>
+        <div id="cta_goal_other_block" style="display:none;margin-top:10px">
+          <input type="text" id="cta_goal_other" placeholder="Please specify the goal">
+        </div>
+        <div class="error-msg" id="err-cta_goal">Please select at least one goal</div>
       </div>
 
       <div class="card">
@@ -718,7 +742,17 @@
       <div class="card">
         <label>Previous examples, templates, or reference links</label>
         <textarea id="related_urls" placeholder="Google Doc links, Canva files, previous email links, HubSpot templates, Drive folders — anything the team can reference..." rows="3"></textarea>
-        <div class="field-tip">The more reference material you give us, the less back-and-forth we need.</div>
+        <div style="margin-top:12px">
+          <label style="font-size:12px;font-weight:600;color:var(--grey-text);margin-bottom:6px">Or upload reference files directly</label>
+          <div class="upload-drop" id="refs_drop" onclick="document.getElementById('refs_file').click()">
+            <div class="upload-icon">📎</div>
+            <div class="upload-label">Click to upload or drag &amp; drop</div>
+            <div class="upload-hint">PDFs, images, docs, Canva exports — max 20MB each</div>
+          </div>
+          <input type="file" id="refs_file" multiple accept="*/*" style="display:none" onchange="handleFileSelect(this,'refs_file_list','refs_drop')">
+          <div id="refs_file_list" class="file-list"></div>
+        </div>
+        <div class="field-tip" style="margin-top:10px">The more reference material you give us, the less back-and-forth we need.</div>
       </div>
 
       <div class="card">
@@ -782,12 +816,12 @@
   const totalSteps = 5;
 
   // ===== FILE UPLOADS =====
-  const uploadedFiles = { images: [], logo: [] };
+  const uploadedFiles = { images: [], logo: [], refs: [] };
 
   function handleFileSelect(input, listId, dropId) {
     const files = Array.from(input.files);
     const listEl = document.getElementById(listId);
-    const key = listId.includes('images') ? 'images' : 'logo';
+    const key = listId.includes('images') ? 'images' : listId.includes('logo') ? 'logo' : 'refs';
     files.forEach(file => {
       const id = 'f_' + Math.random().toString(36).slice(2);
       const item = document.createElement('div');
@@ -828,7 +862,7 @@
 
   // Drag and drop
   document.addEventListener('DOMContentLoaded', () => {
-    ['images_drop','logo_drop'].forEach(dropId => {
+    ['images_drop','logo_drop','refs_drop'].forEach(dropId => {
       const el = document.getElementById(dropId);
       if (!el) return;
       const inputId = dropId.replace('_drop','_file');
@@ -836,7 +870,7 @@
       el.addEventListener('dragleave', () => el.classList.remove('dragover'));
       el.addEventListener('drop', e => {
         e.preventDefault(); el.classList.remove('dragover');
-        const key = dropId.includes('images') ? 'images' : 'logo';
+        const key = dropId.includes('images') ? 'images' : dropId.includes('logo') ? 'logo' : 'refs';
         const listId = dropId.replace('_drop','_file_list');
         Array.from(e.dataTransfer.files).forEach(file => {
           const id = 'f_' + Math.random().toString(36).slice(2);
@@ -933,6 +967,8 @@
       if (!msg) { showErr('message'); ok = false; } else clearErr('message');
       if (!ta) { showErr('target_audience'); ok = false; } else clearErr('target_audience');
       if (!km) { showErr('key_message'); ok = false; } else clearErr('key_message');
+      const cg = getChecks('cta_goal');
+      if (!cg.length) { showErr('cta_goal'); ok = false; } else clearErr('cta_goal');
       if (!ct) { showErr('cta_text'); ok = false; } else clearErr('cta_text');
       if (!cd) { showErr('cta_destination'); ok = false; } else clearErr('cta_destination');
     }
@@ -1025,7 +1061,14 @@
       })(),
       project_event_name: getValue('project_event_name'),
       message: getValue('message'),
-      target_audience: document.getElementById('target_audience').value,
+      target_audience: document.getElementById('target_audience').value === 'other'
+        ? 'Other: ' + getValue('target_audience_other')
+        : document.getElementById('target_audience').value,
+      cta_goal: (() => {
+        const goals = getChecks('cta_goal');
+        const otherSpec = getValue('cta_goal_other');
+        return goals.map(g => g === 'cta_goal_other' ? 'Other: ' + otherSpec : g).join(';');
+      })(),
       key_message: getValue('key_message'),
       cta_text: getValue('cta_text'),
       cta_destination: getValue('cta_destination'),
@@ -1046,7 +1089,11 @@
       done_before: getRadio('done_before'),
       how_done_before: getValue('how_done_before'),
       what_to_improve: getValue('what_to_improve'),
-      related_urls: getValue('related_urls'),
+      related_urls: (() => {
+        const typed = getValue('related_urls');
+        const refFiles = uploadedFiles.refs.map(f => `${f.name}: ${f.url}`).join('\n');
+        return [typed, refFiles].filter(Boolean).join('\n');
+      })(),
       additional_notes: getValue('additional_notes'),
       approval_contact: approvalContact,
       approver_aware: approverAware,
