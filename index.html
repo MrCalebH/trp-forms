@@ -282,6 +282,19 @@
   /* ===== ASSET STATUS ===== */
   .asset-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 600px) { .asset-grid { grid-template-columns: 1fr; } }
+  .upload-drop { border:2px dashed var(--border);border-radius:8px;padding:28px 20px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s; }
+  .upload-drop:hover, .upload-drop.dragover { border-color:var(--blue);background:rgba(0,93,161,0.04); }
+  .upload-icon { font-size:28px;margin-bottom:6px; }
+  .upload-label { font-size:13px;font-weight:600;color:var(--text); }
+  .upload-hint { font-size:11px;color:var(--grey-text);margin-top:3px; }
+  .file-list { margin-top:10px;display:flex;flex-direction:column;gap:6px; }
+  .file-item { display:flex;align-items:center;justify-content:space-between;background:#f7f8fa;border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-size:12px; }
+  .file-item .file-name { font-weight:600;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+  .file-item .file-size { color:var(--grey-text);margin:0 10px;white-space:nowrap; }
+  .file-item .file-remove { color:#e74c3c;cursor:pointer;font-size:16px;line-height:1;flex-shrink:0; }
+  .file-item .file-status { font-size:11px;margin-left:6px; }
+  .file-item.uploading .file-name { color:var(--grey-text); }
+  .file-item.done .file-name { color:var(--green); }
   .asset-card { background: var(--grey-bg); border-radius: 8px; padding: 14px; border: 1.5px solid var(--grey-border); }
   .asset-card label { margin-bottom: 8px; font-size: 12px; }
 
@@ -600,34 +613,67 @@
       </div>
 
       <div class="card">
-        <div class="asset-grid">
-          <div class="asset-card">
+        <div style="display:flex;flex-direction:column;gap:20px">
+
+          <!-- Copy Written -->
+          <div class="asset-card" style="border:1px solid var(--border);border-radius:8px;padding:16px">
             <label>Copy Written? <span class="req">*</span></label>
-            <div class="radio-group" id="has_copy">
-              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_copy')"><div class="radio-dot"></div> Yes</div>
-              <div class="radio-opt" data-val="partial" onclick="selectRadio(this,'has_copy')"><div class="radio-dot"></div> Partial</div>
-              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_copy')"><div class="radio-dot"></div> No</div>
+            <div class="radio-group inline" id="has_copy" style="margin-top:6px">
+              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_copy'); document.getElementById('copy_block').style.display='block'"><div class="radio-dot"></div> Yes</div>
+              <div class="radio-opt" data-val="partial" onclick="selectRadio(this,'has_copy'); document.getElementById('copy_block').style.display='block'"><div class="radio-dot"></div> Partial</div>
+              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_copy'); document.getElementById('copy_block').style.display='none'"><div class="radio-dot"></div> No</div>
             </div>
             <div class="error-msg" id="err-has_copy">Required</div>
+            <div id="copy_block" style="display:none;margin-top:14px">
+              <label style="font-size:12px;font-weight:600;color:var(--grey-text);margin-bottom:6px">Paste your copy below</label>
+              <textarea id="copy_text" placeholder="Paste headlines, body copy, CTAs, subject lines, or any written content you have ready. Include notes on what's still missing if partial." rows="6" style="font-size:13px"></textarea>
+            </div>
           </div>
-          <div class="asset-card">
+
+          <!-- Images / Photos -->
+          <div class="asset-card" style="border:1px solid var(--border);border-radius:8px;padding:16px">
             <label>Images / Photos? <span class="req">*</span></label>
-            <div class="radio-group" id="has_images">
-              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_images')"><div class="radio-dot"></div> Yes</div>
-              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_images')"><div class="radio-dot"></div> No</div>
+            <div class="radio-group inline" id="has_images" style="margin-top:6px">
+              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_images'); document.getElementById('images_block').style.display='block'"><div class="radio-dot"></div> Yes</div>
+              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_images'); document.getElementById('images_block').style.display='none'"><div class="radio-dot"></div> No</div>
             </div>
             <div class="error-msg" id="err-has_images">Required</div>
+            <div id="images_block" style="display:none;margin-top:14px">
+              <label style="font-size:12px;font-weight:600;color:var(--grey-text);margin-bottom:6px">Upload your images or photos</label>
+              <div class="upload-drop" id="images_drop" onclick="document.getElementById('images_file').click()">
+                <div class="upload-icon">📷</div>
+                <div class="upload-label">Click to upload or drag &amp; drop</div>
+                <div class="upload-hint">JPG, PNG, WEBP, PDF — max 20MB each</div>
+              </div>
+              <input type="file" id="images_file" multiple accept="image/*,.pdf" style="display:none" onchange="handleFileSelect(this,'images_file_list','images_drop')">
+              <div id="images_file_list" class="file-list"></div>
+            </div>
           </div>
-          <div class="asset-card">
+
+          <!-- Logo / Brand File -->
+          <div class="asset-card" style="border:1px solid var(--border);border-radius:8px;padding:16px">
             <label>Logo / Brand File? <span class="req">*</span></label>
-            <div class="radio-group" id="has_logo">
-              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_logo')"><div class="radio-dot"></div> Yes</div>
-              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_logo')"><div class="radio-dot"></div> No</div>
-              <div class="radio-opt" data-val="using_trp_brand" onclick="selectRadio(this,'has_logo')"><div class="radio-dot"></div> Using TRP brand</div>
+            <div class="radio-group inline" id="has_logo" style="margin-top:6px">
+              <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'has_logo'); document.getElementById('logo_block').style.display='block'"><div class="radio-dot"></div> Yes</div>
+              <div class="radio-opt" data-val="no" onclick="selectRadio(this,'has_logo'); document.getElementById('logo_block').style.display='none'"><div class="radio-dot"></div> No</div>
+              <div class="radio-opt" data-val="using_trp_brand" onclick="selectRadio(this,'has_logo'); document.getElementById('logo_block').style.display='none'"><div class="radio-dot"></div> Using TRP brand</div>
             </div>
             <div class="error-msg" id="err-has_logo">Required</div>
+            <div id="logo_block" style="display:none;margin-top:14px">
+              <label style="font-size:12px;font-weight:600;color:var(--grey-text);margin-bottom:6px">Upload your logo or brand file</label>
+              <div class="upload-drop" id="logo_drop" onclick="document.getElementById('logo_file').click()">
+                <div class="upload-icon">🎨</div>
+                <div class="upload-label">Click to upload or drag &amp; drop</div>
+                <div class="upload-hint">SVG, PNG, AI, EPS, PDF — max 20MB</div>
+              </div>
+              <input type="file" id="logo_file" multiple accept=".svg,.png,.ai,.eps,.pdf,image/*" style="display:none" onchange="handleFileSelect(this,'logo_file_list','logo_drop')">
+              <div id="logo_file_list" class="file-list"></div>
+            </div>
           </div>
+
         </div>
+        <!-- Hidden fields for uploaded URLs (populated on submit) -->
+        <input type="hidden" id="uploaded_asset_urls">
       </div>
 
       <div class="card" style="border-left:3px solid var(--blue)">
@@ -728,6 +774,75 @@
 <script>
   let currentStep = 0;
   const totalSteps = 5;
+
+  // ===== FILE UPLOADS =====
+  const uploadedFiles = { images: [], logo: [] };
+
+  function handleFileSelect(input, listId, dropId) {
+    const files = Array.from(input.files);
+    const listEl = document.getElementById(listId);
+    const key = listId.includes('images') ? 'images' : 'logo';
+    files.forEach(file => {
+      const id = 'f_' + Math.random().toString(36).slice(2);
+      const item = document.createElement('div');
+      item.className = 'file-item uploading';
+      item.id = id;
+      item.innerHTML = `<span class="file-name">${file.name}</span><span class="file-size">${(file.size/1024).toFixed(0)} KB</span><span class="file-status">⏳</span><span class="file-remove" onclick="removeFile('${id}','${key}')">×</span>`;
+      listEl.appendChild(item);
+      uploadFile(file, id, key);
+    });
+    input.value = '';
+  }
+
+  async function uploadFile(file, itemId, key) {
+    const item = document.getElementById(itemId);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data.url) {
+        uploadedFiles[key].push({ name: file.name, url: data.url, id: itemId });
+        item.className = 'file-item done';
+        item.querySelector('.file-status').textContent = '✅';
+      } else {
+        item.querySelector('.file-status').textContent = '❌ Failed';
+        item.style.borderColor = '#e74c3c';
+      }
+    } catch(e) {
+      item.querySelector('.file-status').textContent = '❌ Error';
+      item.style.borderColor = '#e74c3c';
+    }
+  }
+
+  function removeFile(itemId, key) {
+    document.getElementById(itemId)?.remove();
+    uploadedFiles[key] = uploadedFiles[key].filter(f => f.id !== itemId);
+  }
+
+  // Drag and drop
+  document.addEventListener('DOMContentLoaded', () => {
+    ['images_drop','logo_drop'].forEach(dropId => {
+      const el = document.getElementById(dropId);
+      if (!el) return;
+      const inputId = dropId.replace('_drop','_file');
+      el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('dragover'); });
+      el.addEventListener('dragleave', () => el.classList.remove('dragover'));
+      el.addEventListener('drop', e => {
+        e.preventDefault(); el.classList.remove('dragover');
+        const key = dropId.includes('images') ? 'images' : 'logo';
+        const listId = dropId.replace('_drop','_file_list');
+        Array.from(e.dataTransfer.files).forEach(file => {
+          const id = 'f_' + Math.random().toString(36).slice(2);
+          const item = document.createElement('div');
+          item.className = 'file-item uploading'; item.id = id;
+          item.innerHTML = `<span class="file-name">${file.name}</span><span class="file-size">${(file.size/1024).toFixed(0)} KB</span><span class="file-status">⏳</span><span class="file-remove" onclick="removeFile('${id}','${key}')">×</span>`;
+          document.getElementById(listId).appendChild(item);
+          uploadFile(file, id, key);
+        });
+      });
+    });
+  });
 
   // ===== NAVIGATION =====
   function goTo(step) {
@@ -908,8 +1023,13 @@
       is_urgent: getRadio('is_urgent'),
       urgent_reason: getValue('urgent_reason'),
       has_copy: getRadio('has_copy'),
+      copy_text: getValue('copy_text'),
       has_images: getRadio('has_images'),
       has_logo: getRadio('has_logo'),
+      uploaded_asset_urls: (() => {
+        const all = [...uploadedFiles.images, ...uploadedFiles.logo];
+        return all.map(f => `${f.name}: ${f.url}`).join('\n');
+      })(),
       done_before: getRadio('done_before'),
       how_done_before: getValue('how_done_before'),
       what_to_improve: getValue('what_to_improve'),
