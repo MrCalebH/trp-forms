@@ -426,7 +426,7 @@
 
       <div class="nav-row">
         <span class="step-counter">Step 1 of 5</span>
-        <button type="button" class="btn btn-primary" onclick="next(0)">Next — What Do You Need →</button>
+        <button type="button" class="btn btn-primary" onclick="next(0)">Next: What Do You Need →</button>
       </div>
     </div>
 
@@ -484,7 +484,7 @@
       </div>
 
       <div class="card">
-        <label>Description — What do you need and why? <span class="req">*</span>
+        <label>Description: What do you need and why? <span class="req">*</span>
           <span class="hint">Be specific. The more detail you give us, the faster we can deliver.</span>
         </label>
         <textarea id="message" placeholder="Describe what you need. Include any context, previous work this builds on, or specific requirements..." rows="5"></textarea>
@@ -495,7 +495,7 @@
         <label>Target Audience <span class="req">*</span></label>
         <select id="target_audience" onchange="document.getElementById('target_audience_other_block').style.display=this.value==='other'?'block':'none'">
           <option value="">Who is this for?</option>
-          <option value="prospects">Prospects — people who haven't joined yet</option>
+          <option value="prospects">Prospects (people who haven't joined yet)</option>
           <option value="current_members">Current Members</option>
           <option value="success_partners">Success Partners</option>
           <option value="chiropractors">Chiropractors (general)</option>
@@ -574,7 +574,7 @@
       <div class="nav-row">
         <button type="button" class="btn btn-ghost" onclick="prev(1)">← Back</button>
         <span class="step-counter">Step 2 of 5</span>
-        <button type="button" class="btn btn-primary" onclick="next(1)">Next — Deadlines →</button>
+        <button type="button" class="btn btn-primary" onclick="next(1)">Next: Deadlines →</button>
       </div>
     </div>
 
@@ -611,14 +611,14 @@
         </label>
         <div class="radio-group inline" id="is_urgent" style="margin-top:6px">
           <div class="radio-opt" data-val="yes" onclick="selectRadio(this,'is_urgent'); document.getElementById('urgentBanner').classList.add('show'); document.getElementById('urgent_block').style.display='block'">
-            <div class="radio-dot"></div> ⚡ Yes — this is urgent
+            <div class="radio-dot"></div> ⚡ Yes, this is urgent
           </div>
           <div class="radio-opt" data-val="no" onclick="selectRadio(this,'is_urgent'); document.getElementById('urgentBanner').classList.remove('show'); document.getElementById('urgent_block').style.display='none'">
-            <div class="radio-dot"></div> No — standard timeline
+            <div class="radio-dot"></div> No, standard timeline
           </div>
         </div>
         <div class="urgency-banner" id="urgentBanner">
-          ⚠️ Heads up — urgent requests may delay other work in the queue. We'll confirm we can meet your timeline within 1 business day.
+          ⚠️ Heads up: urgent requests may delay other work in the queue. We'll confirm we can meet your timeline within 1 business day.
         </div>
         <div id="urgent_block" style="display:none;margin-top:12px">
           <label>Why is this urgent?</label>
@@ -630,7 +630,7 @@
       <div class="nav-row">
         <button type="button" class="btn btn-ghost" onclick="prev(2)">← Back</button>
         <span class="step-counter">Step 3 of 5</span>
-        <button type="button" class="btn btn-primary" onclick="next(2)">Next — Your Assets →</button>
+        <button type="button" class="btn btn-primary" onclick="next(2)">Next: Your Assets →</button>
       </div>
     </div>
 
@@ -715,7 +715,7 @@
             <div class="radio-dot"></div> Yes
           </div>
           <div class="radio-opt" data-val="no" onclick="selectRadio(this,'done_before'); document.getElementById('prev_block').style.display='none'">
-            <div class="radio-dot"></div> No — first time
+            <div class="radio-dot"></div> No, first time
           </div>
           <div class="radio-opt" data-val="not_sure" onclick="selectRadio(this,'done_before'); document.getElementById('prev_block').style.display='block'">
             <div class="radio-dot"></div> Not sure
@@ -763,7 +763,7 @@
       <div class="nav-row">
         <button type="button" class="btn btn-ghost" onclick="prev(3)">← Back</button>
         <span class="step-counter">Step 4 of 5</span>
-        <button type="button" class="btn btn-primary" onclick="next(3)">Next — Approval →</button>
+        <button type="button" class="btn btn-primary" onclick="next(3)">Next: Delivery →</button>
       </div>
     </div>
 
@@ -1009,26 +1009,26 @@
       video_script:'Video/Script', sms_copy:'SMS Copy', other:'Other'
     };
     const checks = getChecks('request_type').map(v => typeLabels[v] || v).join(', ');
-    const urgentLabel = getRadio('is_urgent') === 'yes' ? '⚡ Yes — urgent' : 'No';
-    const copyLabel = {yes:'Yes',partial:'Partial',no:'No'}[getRadio('has_copy')] || '—';
-    const imagesLabel = {yes:'Yes',no:'No'}[getRadio('has_images')] || '—';
-    const logoLabel = {yes:'Yes',no:'No',using_trp_brand:'Using TRP brand'}[getRadio('has_logo')] || '—';
+    const urgentLabel = getRadio('is_urgent') === 'yes' ? '⚡ Yes, urgent' : 'No';
+    const copyLabel = {yes:'Yes',partial:'Partial',no:'No'}[getRadio('has_copy')] || '-';
+    const imagesLabel = {yes:'Yes',no:'No'}[getRadio('has_images')] || '-';
+    const logoLabel = {yes:'Yes',no:'No',using_trp_brand:'Using TRP brand'}[getRadio('has_logo')] || '-';
 
     const doneBeforeVal = getRadio('done_before');
-    const doneBeforeLabel = {yes:'Yes',no:'No — first time',not_sure:'Not sure'}[doneBeforeVal] || '—';
+    const doneBeforeLabel = {yes:'Yes',no:'No, first time',not_sure:'Not sure'}[doneBeforeVal] || '-';
     const prevRef = document.getElementById('related_urls').value.trim();
 
     document.getElementById('summaryContent').innerHTML = `
       <b>Requester:</b> ${document.getElementById('firstname').value} ${document.getElementById('lastname').value}<br>
-      <b>Project:</b> ${document.getElementById('project_event_name').value || '—'}<br>
-      <b>Type:</b> ${checks || '—'}<br>
-      <b>Hard Deadline:</b> ${document.getElementById('hard_deadline').value || '—'}<br>
-      <b>First Draft:</b> ${document.getElementById('first_draft_date').value || '—'}<br>
+      <b>Project:</b> ${document.getElementById('project_event_name').value || '-'}<br>
+      <b>Type:</b> ${checks || '-'}<br>
+      <b>Hard Deadline:</b> ${document.getElementById('hard_deadline').value || '-'}<br>
+      <b>First Draft:</b> ${document.getElementById('first_draft_date').value || '-'}<br>
       <b>Urgent:</b> ${urgentLabel}<br>
       <b>Copy / Images / Logo:</b> ${copyLabel} / ${imagesLabel} / ${logoLabel}<br>
       <b>Done before?</b> ${doneBeforeLabel}<br>
       ${prevRef ? `<b>References:</b> ${prevRef}<br>` : ''}
-      <b>Recipient:</b> ${document.getElementById('approval_contact').value || '—'}
+      <b>Recipient:</b> ${document.getElementById('approval_contact').value || '-'}
     `;
   }
 
