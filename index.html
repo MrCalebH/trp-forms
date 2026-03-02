@@ -418,6 +418,9 @@
           <option>Success Partner</option>
           <option>Other</option>
         </select>
+        <div id="jobtitle_other_block" style="display:none;margin-top:10px">
+          <input type="text" id="jobtitle_other" placeholder="Please specify your role">
+        </div>
         <div class="error-msg" id="err-jobtitle">Please select your role</div>
       </div>
 
@@ -464,9 +467,12 @@
           <div class="check-opt" data-val="sms_copy" onclick="toggleCheck(this,'request_type')">
             <div class="check-box"></div> SMS Copy
           </div>
-          <div class="check-opt" data-val="other" onclick="toggleCheck(this,'request_type')">
+          <div class="check-opt" data-val="other" onclick="toggleCheck(this,'request_type'); document.getElementById('request_type_other_block').style.display=this.classList.contains('selected')?'block':'none'">
             <div class="check-box"></div> Other
           </div>
+        </div>
+        <div id="request_type_other_block" style="display:none;margin-top:10px">
+          <input type="text" id="request_type_other" placeholder="Please specify the request type">
         </div>
         <div class="error-msg" id="err-request_type">Please select at least one request type</div>
       </div>
@@ -1008,8 +1014,15 @@
       firstname: getValue('firstname'),
       lastname: getValue('lastname'),
       email: getValue('email'),
-      jobtitle: getValue('jobtitle'),
-      request_type: getChecks('request_type').join(';'),
+      jobtitle: getValue('jobtitle') === 'Other' ? 'Other: ' + getValue('jobtitle_other') : getValue('jobtitle'),
+      request_type: (() => {
+        const types = getChecks('request_type');
+        const otherSpec = getValue('request_type_other');
+        if (types.includes('other') && otherSpec) {
+          return types.map(t => t === 'other' ? 'Other: ' + otherSpec : t).join(';');
+        }
+        return types.join(';');
+      })(),
       project_event_name: getValue('project_event_name'),
       message: getValue('message'),
       target_audience: document.getElementById('target_audience').value,
@@ -1072,6 +1085,11 @@
     document.querySelectorAll('.radio-opt, .check-opt').forEach(el => el.classList.remove('selected'));
     goTo(0);
   }
+
+  // Show "please specify" for jobtitle Other
+  document.getElementById('jobtitle').addEventListener('change', function() {
+    document.getElementById('jobtitle_other_block').style.display = this.value === 'Other' ? 'block' : 'none';
+  });
 
   // Set min dates to today
   const today = new Date().toISOString().split('T')[0];
