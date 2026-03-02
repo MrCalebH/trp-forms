@@ -1099,25 +1099,19 @@
       approver_aware: approverAware,
     };
 
-    // Submit to HubSpot
+    // Submit to unified endpoint (HubSpot + ClickUp)
     try {
-      const portalId = '50604063';
-      const formId = 'a68634a1-74b2-4a21-8747-08a287c91ca7';
-      const fields = Object.entries(data).map(([name, value]) => ({ name, value }));
-      const payload = { fields, context: { pageUri: window.location.href, pageName: 'TRP Marketing Request Form' } };
-
-      const resp = await fetch(`https://api.hsforms.com/submissions/v3/integration/submit/${portalId}/${formId}`, {
+      const resp = await fetch('/api/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(data)
       });
-
+      const result = await resp.json();
       const ref = 'TRP-MKTG-' + Date.now().toString(36).toUpperCase().slice(-6);
       document.getElementById('refId').textContent = ref;
       document.getElementById('mainForm').style.display = 'none';
       document.getElementById('successScreen').classList.add('show');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-
     } catch (err) {
       btn.disabled = false;
       btn.textContent = '✓ Submit Request';
